@@ -149,7 +149,7 @@ function setupGameReset(){
     setTimeout(()=>{
       
       window.addEventListener('keyup', reset, {once:true})
-      window.addEventListener('touchstart', reset, {once:true})
+      canvas.addEventListener('touchstart', reset, {once:true})
     }, 1000)
 
   }
@@ -180,6 +180,8 @@ function reset(){
   gameOverAudio.pause();
   if(audioEnabled){
     startMusicLoop(); 
+    let obstacle = new Obstacle();
+    obstacle.stopAudio();
   }
   audioButton.disabled = true;
 
@@ -263,4 +265,4 @@ requestAnimationFrame(gameLoop)
 requestAnimationFrame(gameLoop);
 
 window.addEventListener('keyup', reset, {once:true})
-window.addEventListener('touchstart', reset, {once:true})
+canvas.addEventListener('touchstart', reset, {once:true})

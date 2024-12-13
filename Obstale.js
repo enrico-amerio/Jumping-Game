@@ -11,6 +11,10 @@ export default class Obstacle{
     this.image = image;
     
   }
+  stopAudio(){
+    gameOverAudio.pause(); 
+
+  }
   setAudio(boolean){
     if(audioEnabled){
       gameOverAudio.pause(); 

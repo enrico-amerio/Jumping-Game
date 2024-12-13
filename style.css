@@ -8,7 +8,7 @@ body{
   align-items: center;
   justify-content: center;
   height: 100vh;
-  /* overflow: hidden; */
+  overflow: hidden;
 
   user-select: none;
   touch-action: none;
@@ -25,3 +25,8 @@ canvas{
   border: 2px solid grey;
   image-rendering: pixelated;
 }
+/* @media (max-width: 768px) and (orientation: landscape) {
+body{
+  height:auto;
+}
+} */

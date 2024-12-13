@@ -10,8 +10,7 @@ const backgroundAudio = new Audio('sounds/background.mp3');
 const gameOverAudio = new Audio('sounds/game-over.mp3');
 let gameOverAudioPlayed = false;
 const audioButton = document.getElementById('soundbtn');
-audioButton.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';  // Initial button text
-// document.body.appendChild(audioButton);
+audioButton.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>'; 
 let audioEnabled = false;
 
 
@@ -236,27 +235,14 @@ player.draw();
 score.draw();
 
 if(waitingToStart){
-  // startMusicLoop(); 
   showStartGameText();
-  // player.update(gameSpeed,frameTimeDelta, waitingToStart);
   player.stand(gameSpeed, frameTimeDelta );
 }
 
-// function playGameOverAudio(){
-//   if(audioEnabled){
-//     gameOverAudio.currentTime = 0;
-//     gameOverAudio.volume = 0.5;
-//     gameOverAudio.play();
-//     gameOverAudioPlayed = true;
-//   }
-// }
 if(gameOver){
   audioButton.disabled = false;  
   stopMusicLoop();
-  // if(!gameOverAudioPlayed){
-  //   playGameOverAudio();
-
-  // }
+ 
   showGameOver();
 }
 

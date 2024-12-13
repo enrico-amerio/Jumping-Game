@@ -2,9 +2,8 @@ import Player from "./Player.js";
 import Ground from "./Ground.js";
 import Hills from "./Hills.js";
 import Clouds from "./Clouds.js";
-import CactiController from "./CactiController.js";
+import ObstaclesController from "./ObstaclesController.js";
 import Score from "./Score.js";
-import EnemiesController from "./EnemiesController.js"
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
@@ -21,19 +20,14 @@ const MAX_JUMP_HEIGHT = GAME_HEIGHT;
 const MIN_JUMP_HEIGHT = 150;
 const GROUND_WIDTH = 2400;
 const GROUND_HEIGHT = 324;
-const GROUND_AND_CACTUS_SPEED = 0.5;
+const GROUND_AND_OBSTACLE_SPEED = 0.5;
 
-const CACTI_CONFIG = [
-  // {width:48 /1.5, height: 100 / 1.5, image:"images/cactus_1.png"},
-  // {width:98 /1.5, height: 100 / 1.5, image:"images/cactus_2.png"},
-  // {width:68 /1.5, height: 70 / 1.5, image:"images/cactus_3.png"}
-  {width:64 /1.5, height: 52 / 1.5, image:"images/Dino/dino1.png"},
-  {width:64 /1.5, height: 52 / 1.5, image:"images/Dino/dino2.png"},
-  {width:64 /1.5, height: 52 / 1.5, image:"images/Dino/dino3.png"},
-  {width:64 /1.5, height: 52 / 1.5, image:"images/Dino/dino4.png"},
-  {width:64 /1.5, height: 52 / 1.5, image:"images/Dino/dino5.png"},
-  {width:64 /1.5, height: 52 / 1.5, image:"images/Dino/dino6.png"},
-  {width:64 /1.5, height: 52 / 1.5, image:"images/Dino/dino7.png"}
+const OBSTACLES_CONFIG = [
+  {width:270 /4, height: 258 / 4, image:"images/obstacles/1.png"},
+  {width:184 /4, height: 195 / 4, image:"images/obstacles/2.png"},
+  {width:149 /4, height: 299 / 4, image:"images/obstacles/3.png"},
+  {width:159 /4, height: 326 / 4, image:"images/obstacles/4.png"},
+ 
 ]
 
 //Game Object
@@ -41,9 +35,8 @@ let player = null;
 let ground = null;
 let hills = null;
 let clouds = null;
-let cactiController = null;
+let obstaclesController = null;
 let score = null;
-let enemiesController = null;
 
 let scaleRatio = null;
 let previousTime = null;
@@ -62,25 +55,21 @@ function createSprites(){
   const groundHeightInGame = GROUND_HEIGHT * scaleRatio;
 
   player = new Player(ctx, playerWidthInGame, playerHeightInGame,minJumpHeightInGame, maxJumpHeightInGame, scaleRatio)
-  ground = new Ground(ctx, groundWidthInGame, groundHeightInGame, GROUND_AND_CACTUS_SPEED, scaleRatio);
-  hills = new Hills (ctx, groundWidthInGame, groundHeightInGame, GROUND_AND_CACTUS_SPEED, scaleRatio);
-  clouds = new Clouds (ctx, groundWidthInGame, groundHeightInGame, GROUND_AND_CACTUS_SPEED, scaleRatio);
+  ground = new Ground(ctx, groundWidthInGame, groundHeightInGame,  GROUND_AND_OBSTACLE_SPEED, scaleRatio);
+  hills = new Hills (ctx, groundWidthInGame, groundHeightInGame,  GROUND_AND_OBSTACLE_SPEED, scaleRatio);
+  clouds = new Clouds (ctx, groundWidthInGame, groundHeightInGame,  GROUND_AND_OBSTACLE_SPEED, scaleRatio);
 
   
-  const cactiImages = CACTI_CONFIG.map(cactus =>{
+  const obstaclesImages = OBSTACLES_CONFIG.map(obstacle =>{
     const image = new Image();
-    image.src = cactus.image;
+    image.src = obstacle.image;
     return{
       image:image,
-      width: cactus.width * scaleRatio,
-      height: cactus.height * scaleRatio,
+      width: obstacle.width * scaleRatio,
+      height: obstacle.height * scaleRatio,
     };
   });
-  const enemyWidth = 80 / 1.5 * scaleRatio;
-const enemyHeight = 80 / 1.5 * scaleRatio;
-
-// enemiesController = new EnemiesController(ctx, enemyWidth, enemyHeight, scaleRatio, GROUND_AND_CACTUS_SPEED);
-  cactiController = new CactiController(ctx, cactiImages, scaleRatio, GROUND_AND_CACTUS_SPEED);
+  obstaclesController = new ObstaclesController(ctx, obstaclesImages, scaleRatio, GROUND_AND_OBSTACLE_SPEED);
   score = new Score(ctx, scaleRatio);
 }
 function setScreen(){
@@ -132,8 +121,7 @@ function reset(){
   ground.reset();
   hills.reset(); 
   clouds.reset();
-  cactiController.reset();
-  // enemiesController.reset();
+  obstaclesController.reset();
   score.reset();
   gameSpeed = GAME_SPEED_START;
 }
@@ -167,15 +155,13 @@ if(!gameOver && !waitingToStart){
   clouds.update(gameSpeed, frameTimeDelta);
   hills.update(gameSpeed, frameTimeDelta);
   ground.update(gameSpeed, frameTimeDelta);
-  cactiController.update(gameSpeed, frameTimeDelta);
-  // enemiesController.update(gameSpeed, frameTimeDelta);
+  obstaclesController.update(gameSpeed, frameTimeDelta);
   player.update(gameSpeed, frameTimeDelta);
   score.update(frameTimeDelta);
   updateGameSpeed(frameTimeDelta);
 
 }
- if(!gameOver && cactiController.collideWith(player)){
-// if(!gameOver && enemiesController.collideWith(player)){
+ if(!gameOver && obstaclesController.collideWith(player)){
   gameOver = true;
   setupGameReset();
   score.setHighScore();
@@ -189,8 +175,7 @@ if(waitingToStart){
 clouds.draw();
 hills.draw();
 ground.draw();
-cactiController.draw();
-// enemiesController.draw();
+obstaclesController.draw();
 player.draw();
 score.draw();
 if(gameOver){

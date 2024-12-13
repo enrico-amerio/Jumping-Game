@@ -2,6 +2,7 @@ export default class Player{
   WALK_ANIMATION_TIMER = 200;
   walkAnimationTimer = this.WALK_ANIMATION_TIMER;
   runImages = [];
+  jumpImages = [];
   
 
   jumpPressed = false;
@@ -26,22 +27,13 @@ export default class Player{
     this.yStandingPosition = this.y;
 
 
-    // Standing Imgs da togliere quando implemento l'animazione del salto
+    // Standing Img (inizializza il primo frame )
 
     this.standingStillImage = new Image();
     this.standingStillImage.src = 'images/5x/idle_0.png';
     this.image = this.standingStillImage;
-    
-    const stillImage0 = new Image();
-    stillImage0.src = 'images/5x/idle_0.png';
-    this.image = stillImage0;
-    // const stillImage1 = new Image();
-    // stillImage1.src = 'images/5x/idle_1.png';
-    // const stillImage2 = new Image();
-    // stillImage2.src = 'images/5x/idle_2.png';
-    // const stillImage3 = new Image();
-    // stillImage3.src = 'images/5x/idle_3.png';
-    
+
+     
     this.standImages = [];
     for (let i = 0; i <= 3; i++) { 
       const standImages = new Image();
@@ -52,28 +44,6 @@ export default class Player{
     this.standImgIndex = 0;
     this.STAND_ANIMATION_TIMER = 300;
     this.standAnimationTimer = this.STAND_ANIMATION_TIMER;
-
-//Running Images
-
-    // const runImage0 = new Image();
-    // runImage0.src = 'images/5x/run_0.png';
-    
-    // const runImage1 = new Image();
-    // runImage1.src = 'images/5x/run_1.png';
-
-    // const runImage2 = new Image();
-    // runImage2.src = 'images/5x/run_2.png';
-
-    // const runImage3 = new Image();
-    // runImage3.src = 'images/5x/run_3.png';
-
-    // const runImage4 = new Image();
-    // runImage4.src = 'images/5x/run_4.png';
-
-    // const runImage5 = new Image();
-    // runImage5.src = 'images/5x/run_5.png';
-
-
 
     this.runImages = [];
     for (let i = 0; i <= 5; i++) { 
@@ -123,31 +93,28 @@ export default class Player{
     this.jumpPressed = false;
   }
   update(gameSpeed,frameTimeDelta, waitingToStart){
-    // console.log(waitingToStart);
     
-    // if(waitingToStart){
-    //   this.stand(gameSpeed, frameTimeDelta);
-      
-    // }else{
-      // this.waitingToStart = false;
-      // console.log(this.waitingToStart);
       this.run(gameSpeed, frameTimeDelta);
-      if(this.jumpInProgress){
-        this.image = this.standingStillImage;
-      }
       this.jump(frameTimeDelta);
-
-    // }
   }
   jump(frameTimeDelta){
     if(this.jumpPressed){
       this.jumpInProgress = true;
+      
+      
+      
     }
     if(this.jumpInProgress && !this.falling){
       if(this.y > this.canvas.height - this.minJumpHeight || (this.y > this.canvas.height - this.maxJumpHeight && this.jumpPressed)){
         this.y-= this.JUMP_SPEED * frameTimeDelta * this.scaleRatio
+        const jumpImage = new Image();
+        jumpImage.src = 'images/5x/jump_0.png';
+        this.image = jumpImage;
       }else{
         this.falling = true;
+        const fallImage = new Image();
+        fallImage.src = 'images/5x/jump_1.png';
+      this.image = fallImage;
       }
     }else{
       if(this.y < this.yStandingPosition){
@@ -174,7 +141,7 @@ export default class Player{
     }
   }
   run(gameSpeed, frameTimeDelta) {
-    if (this.walkAnimationTimer <= 0) {
+    if (this.walkAnimationTimer <= 0 && !this.falling) {
       // Cycle through images using the current index
       this.runImgIndex = (this.runImgIndex + 1) % this.runImages.length;
       this.image = this.runImages[this.runImgIndex];

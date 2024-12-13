@@ -1,3 +1,6 @@
+const gameOverAudio = new Audio('sounds/game-over.mp3');
+let audioEnabled = null;
+ 
 export default class Obstacle{
   constructor(ctx, x, y, width, height, image){
     this.ctx = ctx;
@@ -7,6 +10,12 @@ export default class Obstacle{
     this.height = height;
     this.image = image;
     
+  }
+  setAudio(boolean){
+    if(audioEnabled){
+      gameOverAudio.pause(); 
+    }
+    audioEnabled = boolean;
   }
   update(speed, gameSpeed, frameTimeDelta, scaleRatio){
     this.x -= speed * gameSpeed * frameTimeDelta * scaleRatio;
@@ -22,6 +31,12 @@ export default class Obstacle{
       sprite.y < this.y + this.height / adjustBy &&
       sprite.y + sprite.height / adjustBy > this.y
   ) {
+    if(audioEnabled){
+      gameOverAudio.currentTime = 0;
+      gameOverAudio.volume = 0.5;
+      gameOverAudio.play();
+      
+    }
       return true;
   } else {
       return false;

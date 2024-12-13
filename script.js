@@ -4,10 +4,17 @@ import Hills from "./Hills.js";
 import Clouds from "./Clouds.js";
 import ObstaclesController from "./ObstaclesController.js";
 import Score from "./Score.js";
+import Obstacle from "./Obstale.js";
 
 const backgroundAudio = new Audio('sounds/background.mp3');
 const gameOverAudio = new Audio('sounds/game-over.mp3');
 let gameOverAudioPlayed = false;
+const audioButton = document.getElementById('soundbtn');
+audioButton.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';  // Initial button text
+// document.body.appendChild(audioButton);
+let audioEnabled = false;
+
+
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
@@ -58,7 +65,7 @@ function createSprites(){
   const groundWidthInGame = GROUND_WIDTH * scaleRatio;
   const groundHeightInGame = GROUND_HEIGHT * scaleRatio;
 
-  player = new Player(ctx, playerWidthInGame, playerHeightInGame,minJumpHeightInGame, maxJumpHeightInGame, scaleRatio)
+  player = new Player(ctx, playerWidthInGame, playerHeightInGame,minJumpHeightInGame, maxJumpHeightInGame, scaleRatio, audioEnabled)
   ground = new Ground(ctx, groundWidthInGame, groundHeightInGame,  GROUND_AND_OBSTACLE_SPEED, scaleRatio);
   hills = new Hills (ctx, groundWidthInGame, groundHeightInGame,  GROUND_AND_OBSTACLE_SPEED, scaleRatio);
   clouds = new Clouds (ctx, groundWidthInGame, groundHeightInGame,  GROUND_AND_OBSTACLE_SPEED, scaleRatio);
@@ -73,9 +80,38 @@ function createSprites(){
       height: obstacle.height * scaleRatio,
     };
   });
-  obstaclesController = new ObstaclesController(ctx, obstaclesImages, scaleRatio, GROUND_AND_OBSTACLE_SPEED);
+  obstaclesController = new ObstaclesController(ctx, obstaclesImages, scaleRatio, GROUND_AND_OBSTACLE_SPEED, audioEnabled);
   score = new Score(ctx, scaleRatio);
 }
+// Function to toggle audio
+function toggleAudio() {
+  if (audioEnabled) {
+    // Stop the background music if it's playing
+    backgroundAudio.pause();
+    backgroundAudio.currentTime = 0;
+    gameOverAudio.pause();
+    gameOverAudio.currentTime = 0;  
+    audioButton.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>'; 
+  } else {
+    // Play the background music
+    backgroundAudio.loop = true;
+    backgroundAudio.volume = 0.5;
+    backgroundAudio.play().catch(err => {
+      console.error("Error playing background audio:", err);
+    });
+    audioButton.innerHTML = '<i class="fa-solid fa-volume-high"></i>';  // Change button text
+  }
+  
+
+  // Toggle the audioEnabled flag
+  audioEnabled = !audioEnabled;
+  player.setAudio();
+  let obstacle = new Obstacle();
+  obstacle.setAudio(audioEnabled);
+}
+
+// Add event listener to toggle audio
+audioButton.addEventListener('click', toggleAudio);
 function setScreen(){
   scaleRatio = getScaleRatio();
   canvas.width = GAME_WIDTH * scaleRatio;
@@ -142,7 +178,10 @@ function reset(){
   score.reset();
   gameSpeed = GAME_SPEED_START;
   gameOverAudio.pause();
-  startMusicLoop();
+  if(audioEnabled){
+    startMusicLoop(); 
+  }
+  audioButton.disabled = true;
 
 }
 function showStartGameText(){
@@ -195,24 +234,27 @@ player.draw();
 score.draw();
 
 if(waitingToStart){
-  startMusicLoop(); 
+  // startMusicLoop(); 
   showStartGameText();
   // player.update(gameSpeed,frameTimeDelta, waitingToStart);
   player.stand(gameSpeed, frameTimeDelta );
 }
 
-function playGameOverAudio(){
-  gameOverAudio.currentTime = 0;
-  gameOverAudio.volume = 0.5;
-  gameOverAudio.play();
-  gameOverAudioPlayed = true;
-}
+// function playGameOverAudio(){
+//   if(audioEnabled){
+//     gameOverAudio.currentTime = 0;
+//     gameOverAudio.volume = 0.5;
+//     gameOverAudio.play();
+//     gameOverAudioPlayed = true;
+//   }
+// }
 if(gameOver){
+  audioButton.disabled = false;  
   stopMusicLoop();
-  if(!gameOverAudioPlayed){
-    playGameOverAudio();
+  // if(!gameOverAudioPlayed){
+  //   playGameOverAudio();
 
-  }
+  // }
   showGameOver();
 }
 

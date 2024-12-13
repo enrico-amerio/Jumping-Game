@@ -14,7 +14,7 @@ export default class Player{
   JUMP_SPEED = 0.6;
   GRAVITY = 0.4;
 
-  constructor(ctx, width, height, minJumpHeight, maxJumpHeight, scaleRatio){
+  constructor(ctx, width, height, minJumpHeight, maxJumpHeight, scaleRatio, audioEnabled){
 
     this.ctx = ctx;
     this.canvas = ctx.canvas;
@@ -24,6 +24,7 @@ export default class Player{
     this.maxJumpHeight = maxJumpHeight; 
     this.scaleRatio = scaleRatio;
     this.hasLanded = true;
+    this.audioEnabled = audioEnabled;
     
     
     this.x = 10 * scaleRatio;
@@ -101,12 +102,17 @@ export default class Player{
       this.run(gameSpeed, frameTimeDelta);
       this.jump(frameTimeDelta);
   }
+  setAudio(){
+    this.audioEnabled = !this.audioEnabled
+  }
   jump(frameTimeDelta){
     if(this.jumpPressed){
       this.jumpInProgress = true;
       this.hasLanded = false;
-      jumpSound.currentTime = 0;
-      jumpSound.play();
+      if(this.audioEnabled){
+        jumpSound.currentTime = 0;
+        jumpSound.play();
+      }
       
       
       
@@ -131,8 +137,10 @@ export default class Player{
         }
       }else{
         if(!this.hasLanded){
-          landSound.currentTime = 0;  
-          landSound.play();   
+          if(this.audioEnabled){
+            landSound.currentTime = 0;  
+            landSound.play();   
+          }
           this.hasLanded = true;       
         }
         this.falling = false;
@@ -157,7 +165,9 @@ export default class Player{
       // Cycle through images using the current index
       this.runImgIndex = (this.runImgIndex + 1) % this.runImages.length;
       this.image = this.runImages[this.runImgIndex];
-      runSound.play();
+      if(this.audioEnabled){
+        runSound.play();
+      }
   
       // Reset the timer
       this.walkAnimationTimer = this.WALK_ANIMATION_TIMER;

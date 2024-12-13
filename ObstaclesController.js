@@ -5,12 +5,13 @@ export default class ObstaclesController {
   OBSTACLE_INTERVAL_MAX = 2000;
   nextObstacleInterval = null;
   obstacles = [];
-  constructor(ctx, obstaclesImages, scaleRatio, speed){
+  constructor(ctx, obstaclesImages, scaleRatio, speed, audioEnabled){
     this.ctx = ctx;
     this.canvas = ctx.canvas;
     this.obstaclesImages = obstaclesImages;
     this.scaleRatio = scaleRatio;
     this.speed = speed;
+    this.audioEnabled = audioEnabled;
     
     this.setNextObstacleTime();
   }
@@ -26,7 +27,7 @@ export default class ObstaclesController {
     const obstacleImage = this.obstaclesImages[index];
     const x = this.canvas.width * 1.5;
     const y = this.canvas.height - obstacleImage.height - 15 * this.scaleRatio;
-    const obstacle = new Obstacle(this.ctx, x, y , obstacleImage.width, obstacleImage.height, obstacleImage.image
+    const obstacle = new Obstacle(this.ctx, x, y , obstacleImage.width, obstacleImage.height, obstacleImage.image, this.audioEnabled
     );
     this.obstacles.push(obstacle);
   }
@@ -52,4 +53,5 @@ export default class ObstaclesController {
   reset(){
     this.obstacles = [];
   }
+  
 }

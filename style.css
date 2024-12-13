@@ -25,6 +25,26 @@ canvas{
   border: 2px solid grey;
   image-rendering: pixelated;
 }
+button {
+  all: unset; /* Removes all default styles */
+  background: none; /* Ensures no background is applied */
+  border: none; /* Removes borders */
+  padding: 0; /* Removes default padding */
+  font: inherit; /* Inherit font from parent */
+  color: inherit; /* Inherit text color from parent */
+  cursor: pointer; /* Optional: Set cursor to pointer to indicate it's clickable */
+  user-select: none;
+  outline:none;
+}
+#soundbtn{
+  position: absolute;
+  left: 2%;
+  top: 5%;
+  font-size: 1.5rem;
+}
+.wrap{
+  position: relative;
+}
 /* @media (max-width: 768px) and (orientation: landscape) {
 body{
   height:auto;

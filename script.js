@@ -5,6 +5,10 @@ import Clouds from "./Clouds.js";
 import ObstaclesController from "./ObstaclesController.js";
 import Score from "./Score.js";
 
+const backgroundAudio = new Audio('sounds/background.mp3');
+const gameOverAudio = new Audio('sounds/game-over.mp3');
+let gameOverAudioPlayed = false;
+
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 ctx.imageSmoothingEnabled = false;
@@ -20,11 +24,11 @@ const MAX_JUMP_HEIGHT = GAME_HEIGHT;
 const MIN_JUMP_HEIGHT = 150;
 const GROUND_WIDTH = 2400;
 const GROUND_HEIGHT = 324;
-const GROUND_AND_OBSTACLE_SPEED = 0.5;
+const GROUND_AND_OBSTACLE_SPEED = .4;
 
 const OBSTACLES_CONFIG = [
   {width:270 /4, height: 258 / 4, image:"images/obstacles/1.png"},
-  {width:184 /4, height: 195 / 4, image:"images/obstacles/2.png"},
+  {width:184 /3.5, height: 195 / 3.5, image:"images/obstacles/2.png"},
   {width:149 /4, height: 299 / 4, image:"images/obstacles/3.png"},
   {width:159 /4, height: 326 / 4, image:"images/obstacles/4.png"},
  
@@ -97,7 +101,7 @@ if(screen.orientation){
 function showGameOver() {
   const fontSize = 70 * scaleRatio;
   ctx.font = `${fontSize}px Verdana`;
-  ctx.fillStyle = "grey";
+  ctx.fillStyle = "red";
   const x = canvas.width / 4.5;
   const y = canvas.height / 2;
   ctx.fillText("GAME OVER", x, y);
@@ -114,9 +118,22 @@ function setupGameReset(){
 
   }
 }
+function startMusicLoop(){
+  backgroundAudio.loop = true;
+  backgroundAudio.volume = 0.5;
+  backgroundAudio.play();
+}
+function stopMusicLoop(){
+  backgroundAudio.pause();
+  backgroundAudio.currentTime = 0;
+  backgroundAudio.loop = false;
+
+
+}
 function reset(){
   hasAddedEventListenersForRestart = false;
   gameOver = false;
+  gameOverAudioPlayed = false;
   waitingToStart = false;
   ground.reset();
   hills.reset(); 
@@ -124,11 +141,14 @@ function reset(){
   obstaclesController.reset();
   score.reset();
   gameSpeed = GAME_SPEED_START;
+  gameOverAudio.pause();
+  startMusicLoop();
+
 }
 function showStartGameText(){
   const fontSize = 40 * scaleRatio;
   ctx.font = `${fontSize}px Verdana`;
-  ctx.fillStyle = "grey";
+  ctx.fillStyle = "black";
   const x = canvas.width / 14;
   const y = canvas.height / 2;
   ctx.fillText("Tap Screen or Press Space To Start", x, y);
@@ -166,11 +186,6 @@ if(!gameOver && !waitingToStart){
   setupGameReset();
   score.setHighScore();
 }
-if(waitingToStart){
-  showStartGameText();
-  // player.update(gameSpeed,frameTimeDelta, waitingToStart);
-  player.stand(gameSpeed, frameTimeDelta );
-}
 //Draw game objects
 clouds.draw();
 hills.draw();
@@ -178,7 +193,26 @@ ground.draw();
 obstaclesController.draw();
 player.draw();
 score.draw();
+
+if(waitingToStart){
+  startMusicLoop(); 
+  showStartGameText();
+  // player.update(gameSpeed,frameTimeDelta, waitingToStart);
+  player.stand(gameSpeed, frameTimeDelta );
+}
+
+function playGameOverAudio(){
+  gameOverAudio.currentTime = 0;
+  gameOverAudio.volume = 0.5;
+  gameOverAudio.play();
+  gameOverAudioPlayed = true;
+}
 if(gameOver){
+  stopMusicLoop();
+  if(!gameOverAudioPlayed){
+    playGameOverAudio();
+
+  }
   showGameOver();
 }
 
@@ -188,4 +222,3 @@ requestAnimationFrame(gameLoop);
 
 window.addEventListener('keyup', reset, {once:true})
 window.addEventListener('touchstart', reset, {once:true})
-

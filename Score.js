@@ -27,7 +27,7 @@ export default class Score{
     
     const fontSize = 20 * this.scaleRatio;
     this.ctx.font = `${fontSize}px serif`;
-    this.ctx.fillStyle = "#525250";
+    this.ctx.fillStyle = "black ";
     const scoreX = this.canvas.width - 75 * this.scaleRatio;
     const highScoreX = scoreX - 125 * this.scaleRatio;
     const scorePadded = Math.floor(this.score).toString().padStart(6, 0);

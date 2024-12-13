@@ -1,3 +1,6 @@
+const runSound = new Audio('sounds/run.mp3');
+const jumpSound = new Audio('sounds/jump.mp3');
+const landSound = new Audio('sounds/land.mp3');
 export default class Player{
   WALK_ANIMATION_TIMER = 200;
   walkAnimationTimer = this.WALK_ANIMATION_TIMER;
@@ -20,6 +23,7 @@ export default class Player{
     this.minJumpHeight = minJumpHeight; 
     this.maxJumpHeight = maxJumpHeight; 
     this.scaleRatio = scaleRatio;
+    this.hasLanded = true;
     
     
     this.x = 10 * scaleRatio;
@@ -100,6 +104,9 @@ export default class Player{
   jump(frameTimeDelta){
     if(this.jumpPressed){
       this.jumpInProgress = true;
+      this.hasLanded = false;
+      jumpSound.currentTime = 0;
+      jumpSound.play();
       
       
       
@@ -114,7 +121,7 @@ export default class Player{
         this.falling = true;
         const fallImage = new Image();
         fallImage.src = 'images/5x/jump_1.png';
-      this.image = fallImage;
+        this.image = fallImage;
       }
     }else{
       if(this.y < this.yStandingPosition){
@@ -123,6 +130,11 @@ export default class Player{
           this.y = this.yStandingPosition;
         }
       }else{
+        if(!this.hasLanded){
+          landSound.currentTime = 0;  
+          landSound.play();   
+          this.hasLanded = true;       
+        }
         this.falling = false;
         this.jumpInProgress = false;
       }
@@ -145,6 +157,7 @@ export default class Player{
       // Cycle through images using the current index
       this.runImgIndex = (this.runImgIndex + 1) % this.runImages.length;
       this.image = this.runImages[this.runImgIndex];
+      runSound.play();
   
       // Reset the timer
       this.walkAnimationTimer = this.WALK_ANIMATION_TIMER;

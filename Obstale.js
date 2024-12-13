@@ -6,6 +6,7 @@ export default class Obstacle{
     this.width = width;
     this.height = height;
     this.image = image;
+    
   }
   update(speed, gameSpeed, frameTimeDelta, scaleRatio){
     this.x -= speed * gameSpeed * frameTimeDelta * scaleRatio;
@@ -14,7 +15,7 @@ export default class Obstacle{
     this.ctx.drawImage(this.image, this.x, this.y, this.width, this.height)
   }
   collideWith(sprite) {
-    const adjustBy = 1.4;
+    const adjustBy = 2;
   if (
       sprite.x < this.x + this.width / adjustBy &&
       sprite.x + sprite.width / adjustBy > this.x &&

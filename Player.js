@@ -1,6 +1,10 @@
 const runSound = new Audio('sounds/run.mp3');
 const jumpSound = new Audio('sounds/jump.mp3');
 const landSound = new Audio('sounds/land.mp3');
+const jumpImage = new Image();
+jumpImage.src = 'images/5x/jump_0.png';
+const fallImage = new Image();
+fallImage.src = 'images/5x/jump_1.png';
 export default class Player{
   WALK_ANIMATION_TIMER = 200;
   walkAnimationTimer = this.WALK_ANIMATION_TIMER;
@@ -120,13 +124,11 @@ export default class Player{
     if(this.jumpInProgress && !this.falling){
       if(this.y > this.canvas.height - this.minJumpHeight || (this.y > this.canvas.height - this.maxJumpHeight && this.jumpPressed)){
         this.y-= this.JUMP_SPEED * frameTimeDelta * this.scaleRatio
-        const jumpImage = new Image();
-        jumpImage.src = 'images/5x/jump_0.png';
+        
         this.image = jumpImage;
       }else{
         this.falling = true;
-        const fallImage = new Image();
-        fallImage.src = 'images/5x/jump_1.png';
+        
         this.image = fallImage;
       }
     }else{
